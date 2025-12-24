@@ -9,6 +9,9 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 
 from .utils import dump_json
+import torch
+print("CUDA available:", torch.cuda.is_available())
+print("CUDA device count:", torch.cuda.device_count())
 
 
 @dataclass
@@ -45,7 +48,7 @@ class IndexBuilder:
     @property
     def model(self) -> SentenceTransformer:
         if self._model is None:
-            self._model = SentenceTransformer(self.model_name)
+            self._model = SentenceTransformer(self.model_name, device="cuda")
         return self._model
 
     def build(
@@ -78,12 +81,23 @@ class IndexBuilder:
 
         dimension = embeddings.shape[1]
         if self.normalize:
-            index = faiss.IndexFlatIP(dimension)
+            cpu_index = faiss.IndexFlatIP(dimension)
         else:
-            index = faiss.IndexFlatL2(dimension)
+            cpu_index = faiss.IndexFlatL2(dimension)
+        
+        # --- GPU 加速部分（新增） ---
+        res = faiss.StandardGpuResources()  # 创建 GPU 资源
+        gpu_index = faiss.index_cpu_to_gpu(res, 0, cpu_index)  # 把 CPU index 转成 GPU index
+        
+        gpu_index.add(embeddings)  # 在 GPU 上 add
+        cpu_index = faiss.index_gpu_to_cpu(gpu_index)  # 转回 CPU index 以便保存
+        # --- GPU 加速结束 ---
+        
+        faiss.write_index(cpu_index, str(output_dir / "index.faiss"))
 
-        index.add(embeddings)
-        faiss.write_index(index, str(output_dir / "index.faiss"))
+
+        # index.add(embeddings)
+        # faiss.write_index(index, str(output_dir / "index.faiss"))
 
         metadata = IndexMetadata(
             model_name=self.model_name,

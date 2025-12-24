@@ -142,12 +142,29 @@ class MeddraParser:
         return df
 
     def _read_asc(self, filename: str, columns: Iterable[str]) -> pd.DataFrame:
-        """Read a pipe-delimited MedDRA ASCII file with the expected columns."""
+        """Read a pipe-delimited MedDRA ASCII file with automatic encoding detection."""
         path = self.version_dir / filename
         requested_columns: List[str] = list(columns)
         records: List[Dict[str, str]] = []
 
-        with path.open("r", encoding="latin1") as handle:
+        # utf-8 (现代标准) -> gbk (中文旧标准) -> latin1 (英文/西欧)
+        encoding_to_try = ["utf-8", "gbk", "latin1"]
+        handle = None
+        
+        for enc in encoding_to_try:
+            try:
+                with path.open("r", encoding=enc) as test_handle:
+                    test_handle.readline()
+                actual_encoding = enc
+                break
+            except (UnicodeDecodeError, UnicodeError):
+                continue
+        else:
+            actual_encoding = "latin1"
+
+        print(f"DEBUG: Reading {filename} using encoding: {actual_encoding}")
+
+        with path.open("r", encoding=actual_encoding) as handle:
             for line in handle:
                 line = line.rstrip("\r\n")
                 if not line:
@@ -164,6 +181,7 @@ class MeddraParser:
         df = pd.DataFrame(records, columns=requested_columns)
         for column in requested_columns:
             df[column] = df[column].astype(str).fillna("").map(clean_field)
+        
         return df
 
     # ------------------------------

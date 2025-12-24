@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import pandas as pd
-from langchain.docstore.document import Document
+# 尝试导入来自 langchain-classic
+from langchain_classic.docstore.document import Document
 
 try:
     from langchain_huggingface import HuggingFaceEmbeddings

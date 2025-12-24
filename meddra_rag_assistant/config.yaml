@@ -16,14 +16,14 @@ output:
   include_hierarchy: true
 
 vector_store:
-  backend: chroma  # options: faiss, chroma
+  backend: chroma
   chroma:
     collection_prefix: meddra
     device: cpu
     add_batch_size: 2048
 
 llm:
-  backend: openrouter  # options: "openrouter", "openai", "ollama"
+  backend: deepseek
   openai:
     model: gpt-4o-mini
     temperature: 0.0
@@ -32,7 +32,7 @@ llm:
     options:
       temperature: 0.0
   openrouter:
-    model: meta-llama/llama-3.1-8b-instruct
+    model: google/gemini-2.0-flash-lite-preview
     temperature: 0.0
     max_tokens: 512
     url: https://openrouter.ai/api/v1/chat/completions
@@ -40,3 +40,25 @@ llm:
     headers:
       HTTP-Referer: https://your-app.example.com
       X-Title: MedDRA-Coding-AI
+  deepseek:
+    model: deepseek-reasoner
+    temperature: 0.0
+    max_tokens: 2048
+    url: https://api.deepseek.com/chat/completions
+    api_key: "sk-3245d80861e14eaeac76d0bfd8f7b8f4"
+  siliconflow:
+    model: deepseek-ai/DeepSeek-V3
+    temperature: 0.7
+    max_tokens: 1024
+    url: https://api.siliconflow.cn/v1/chat/completions
+    api_key: "sk-..."
+    headers:
+      X-Custom-Source: MedDRA-App
+  custom:
+    model: llama-3.1-8b-instruct
+    temperature: 0.1
+    max_tokens: 1024
+    url: http://192.168.1.100:8000/v1/chat/completions
+    api_key: "any-token"
+    headers:
+      Authorization: "Bearer your-local-token"
