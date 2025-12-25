@@ -157,7 +157,7 @@ class MeddraRAGAgent:
             )
 
         prompt = self._build_prompt(term, results)
-        llm_output = self.llm_client.generate(prompt, system_prompt=SYSTEM_PROMPT)
+        llm_output = self.llm_client.generate(prompt, system_prompt=SYSTEM_PROMPT, response_format={"type": "json_object"})
         parsed_json = self._parse_llm_output(llm_output)
 
         selected_code, selected_level, reasoning = self._extract_selection(parsed_json, results)

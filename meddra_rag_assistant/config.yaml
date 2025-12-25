@@ -6,7 +6,7 @@ embedding:
   model_name: BAAI/bge-m3
   batch_size: 64
   normalize: true
-  device: cpu
+  device: cuda
 
 retrieval:
   top_k: 5
@@ -19,7 +19,7 @@ vector_store:
   backend: chroma
   chroma:
     collection_prefix: meddra
-    device: cpu
+    device: cuda
     add_batch_size: 2048
 
 llm:
@@ -41,7 +41,7 @@ llm:
       HTTP-Referer: https://your-app.example.com
       X-Title: MedDRA-Coding-AI
   deepseek:
-    model: deepseek-reasoner
+    model: deepseek-chat
     temperature: 0.0
     max_tokens: 2048
     url: https://api.deepseek.com/chat/completions

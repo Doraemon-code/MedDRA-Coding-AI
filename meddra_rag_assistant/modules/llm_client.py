@@ -115,7 +115,7 @@ class LLMClient:
         model = cfg.get("model")
         temperature = kwargs.get("temperature", cfg.get("temperature", 0.0))
         max_tokens = kwargs.get("max_tokens", cfg.get("max_tokens"))
-        
+        response_format = kwargs.get("response_format") or cfg.get("response_format")
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
@@ -129,6 +129,9 @@ class LLMClient:
         }
         if max_tokens:
             payload["max_tokens"] = max_tokens
+
+        if response_format:
+            payload["response_format"] = response_format
 
         # --- 3. 构造 Headers ---
         url = cfg.get("url", default_url)
