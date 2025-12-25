@@ -90,7 +90,55 @@ def main() -> None:
         },
         "中文": {
             "title": "基于AI的MedDRA编码助手",
-            "caption": "武汉知止医药科技有限公司",
+            "caption": "zhi        lexical_pct = candidate.lexical_score * 100 if candidate.lexical_score else 0
+        st.sidebar.markdown(
+            f"**{idx}. {candidate.term}**\n\n"
+            f"- {lang_dict['level']}: {candidate.level}\n"
+            f"- {lang_dict['code']}: `{candidate.code}`\n"
+            f"- {lang_dict['vector_score']}: {candidate.score:.3f}\n"
+            f"- {lang_dict['lexical_match']}: {lexical_pct:.1f}%\n"
+            f"- {lang_dict['combined_score']}: {candidate.combined_score:.3f}"
+        )
+        doc_text = candidate.document_text or candidate.metadata.get("document_text", "")
+        if doc_text:
+            st.sidebar.code(doc_text, language="text")
+
+
+def main() -> None:
+    st.set_page_config(page_title="MedDRA-Coding-AI", layout="wide")
+    
+    # 语言切换配置
+    LANGUAGES = {
+        "English": {
+            "title": "MedDRA-Coding-AI",
+            "caption": "Conversational coding assistant with Retrieval-Augmented Generation",
+            "settings": "Settings",
+            "language": "Language",
+            "version": "MedDRA Version",
+            "top_k": "Top-k Candidates",
+            "input_label": "Enter a medical term",
+            "submit_btn": "Encode Term",
+            "info_msg": "Provide a medical term and click **Encode Term** to begin.",
+            "spinner": "Running retrieval and reasoning...",
+            "warning": "Low-confidence result. Consider refining the input term or reviewing the suggested alternatives.",
+            "selected_code": "Selected MedDRA Code",
+            "term": "Term",
+            "code": "Code",
+            "level": "Level",
+            "hierarchy": "Hierarchy",
+            "llm_reasoning": "LLM Reasoning",
+            "raw_output": "Raw LLM Output",
+            "no_index_error": "No MedDRA indexes were found. Run `python meddra_rag_assistant/build_index.py` to build vector indexes before using the assistant.",
+            "vector_results": "Vector Search Results",
+            "no_candidates": "No candidates retrieved.",
+            "no_hierarchy": "No hierarchy information available for the selected code.",
+            "vector_score": "Vector score",
+            "lexical_match": "Lexical match",
+            "combined_score": "Combined score"
+        },
+        "中文": {
+            "title": "基于AI的MedDRA编码助手",
+            "caption": "知足不辱，知止不殆，可以长久",
             "settings": "设置",
             "language": "语言",
             "version": "MedDRA 版本",
