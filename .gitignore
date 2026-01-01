@@ -15,6 +15,7 @@ dist/
 
 # Logs
 *.log
+*.yaml
 
 # IDE / Editor settings
 .vscode/
