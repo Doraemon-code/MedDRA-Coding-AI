@@ -122,11 +122,11 @@ class MeddraParser:
 
     def _load_mdhier(self) -> pd.DataFrame:
         columns = (
-            "llt_code",
+            "pt_code",
             "hlt_code",
             "hlgt_code",
             "soc_code",
-            "llt_name",
+            "pt_name",
             "hlt_name",
             "hlgt_name",
             "soc_name",
@@ -138,7 +138,7 @@ class MeddraParser:
         )
         df = self._read_asc("mdhier.asc", columns)
         df = df.drop(columns=["soc_sorting", "soc_code_dup", "unused"], errors="ignore")
-        df = df.drop_duplicates(subset=["llt_code"]).reset_index(drop=True)
+        df = df.drop_duplicates(subset=["pt_code"]).reset_index(drop=True)
         return df
 
     def _read_asc(self, filename: str, columns: Iterable[str]) -> pd.DataFrame:
@@ -207,8 +207,8 @@ class MeddraParser:
         primary_mask = mdhier_df["primary_soc_flag"].str.upper() == "Y"
         primary_rows = mdhier_df.loc[primary_mask]
         primary_hierarchy = (
-            primary_rows[["llt_code", "hlt_code", "hlgt_code", "soc_code"]]
-            .merge(llt_df[["llt_code", "pt_code"]], on="llt_code", how="left")
+            primary_rows[["pt_code", "hlt_code", "hlgt_code", "soc_code"]]
+            .merge(llt_df[["llt_code", "pt_code"]], on="pt_code", how="left")
             .dropna(subset=["pt_code"])
         )
         if primary_hierarchy.empty:
